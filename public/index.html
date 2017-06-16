@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+      <base href="/">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script src="https://code.angularjs.org/1.6.4/angular-route.js"></script>
+	<script type="text/javascript">
+		var app = angular.module('app',['ngRoute']);
+
+		app.config(function($routeProvider,$locationProvider){
+                  $locationProvider.hashPrefix('');
+                  $locationProvider.html5Mode(true);
+			$routeProvider.when('/',{
+				controller:'HomeController',
+				controllerAs:'vm',
+				templateUrl:'./home.html'
+
+			});
+			$routeProvider.when('/login',{
+				controller:'LoginController',
+				controllerAs:'loginM',
+				templateUrl:'./login.html'
+
+			});
+                  $routeProvider.when('/signup',{
+                        controller:'LoginController',
+                        controllerAs:'signupC',
+                        templateUrl:'./signup.html'
+
+                  });
+			$routeProvider.otherwise('/login');
+		})
+
+            app.controller('LoginController',['$http','$location',function($http,$location){
+                  var loginManager = this;
+
+                  loginManager.register = function(email,password){
+                        var credentials = {'email':email,'password':password};
+                        $http.post('/api/register',credentials).then(function(response){
+                             $location.path('/');
+                        }).then(function(error){
+                              if(error)
+                              console.log(error);
+                        })
+                  }
+
+                  loginManager.login = function(email,password){
+                        var credentials = {'email':email,'password':password};
+                        $http.post('/api/login',credentials).then(function(response){
+                             $location.path('/');
+                        }).then(function(error){
+                              if(error)
+                              console.log(error);
+                        })
+                  }
+            }]);
+
+		app.controller('HomeController',['$http',function($http){
+
+            var vm = this;
+
+            vm.contacts = [];
+
+            vm.getContacts = function(){
+
+            	$http.get('/api/contacts').then(function(response){
+            		vm.contacts = response.data;
+            	})
+
+            };
+
+            vm.getContacts();
+
+            vm.addContact = function(contact){
+        
+            	$http.post('/api/contacts',contact).then(function(response){
+
+            		vm.getContacts();
+            		vm.contact = '';
+            		vm.add_contact = false;
+            	})
+            }
+
+            vm.removeContact = function(contact){
+            	$http.delete('/api/contacts/'+contact._id).then(function(response){
+            		vm.getContacts();
+            	})
+            }
+
+            vm.updateContact = function(contact){
+            	$http.put('/api/contacts',contact).then(function(response){
+            		vm.getContacts();
+            	})
+            }
+
+            return true;
+		}])
+	</script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<meta charset="UTF-8">
+	<title>Contact List</title>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div ng-view></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

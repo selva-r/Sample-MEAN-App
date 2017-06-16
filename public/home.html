@@ -1,0 +1,37 @@
+<h1><center>Contacts App</center></h1>
+<div class="container">
+	<div class="container contacts-container">
+		<table class="table table-bordered table-striped table-hovered table-condensed">
+		<th>Name</th>
+			<th>Mobile</th>
+			<th>Actions</th>
+		<tr ng-repeat="contact in vm.contacts">
+				<td ng-if="!editing">{{contact.name}}</td>
+				<td ng-if="!editing">{{contact.mobile}}</td>
+				<td ng-if="editing"><input type="text" id="name" ng-model="contact.name" class="form-control"/></td>
+				<td ng-if="editing"><input type="number" id="mobile" ng-model="contact.mobile" class="form-control"/></td>
+				<td>
+					<button class="btn btn-primary" type="button" ng-click="editing=!editing" ng-hide="editing">Edit</button>
+					<button class="btn btn-danger" type="button" ng-if="!editing" ng-click="vm.removeContact(contact)">Delete</button>
+					<button class="btn btn-primary" type="button" ng-if="editing" ng-click="vm.updateContact(contact)">Save</button>
+					<button class="btn btn-success" type="button" ng-hide="!editing" ng-click="editing=!editing">Back</button>
+				</td>
+			</tr>
+		</table>
+		<button type="button" class="btn btn-success btn-md" ng-hide="vm.add_contact==true;" ng-click="vm.add_contact=!vm.add_contact;">Add New Contact</button>
+	</div>
+	<div class="container create-contacts" ng-hide="!vm.add_contact">
+		<div class="form-group">
+			<label for="name">Name</label>
+			<input type="text" id="name" class="form-control name" ng-model="vm.contact.name" required/>
+		</div>
+		<div class="form-group">
+			<label for="name">Mobile</label>
+			<input type="number" id="mobile" class="form-control mobile" ng-model="vm.contact.mobile" required/>
+		</div>
+		<div class="form-group">
+			<button type="button" class="btn btn-primary" ng-disabled="!vm.contact.name || !vm.contact.mobile" ng-click="vm.addContact(vm.contact)">Save</button>
+			<button type="button" class="btn btn-warning" ng-click="vm.add_contact=false;">Back</button>
+		</div>
+	</div>
+</div>
